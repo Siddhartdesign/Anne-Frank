@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Anne Frank Diary Calendar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Playfair Display', serif;
+      padding: 20px;
+      background-color: #fdf6ee;
+      color: #333;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    #calendar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2px;
+      max-width: 900px;
+    }
+
+    .day {
+      width: 20px;
+      height: 20px;
+      background: #ddd;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .day.has-entry {
+      background: #6c5ce7;
+    }
+
+    .day.has-entry:hover {
+      outline: 2px solid #222;
+      transform: scale(1.1);
+    }
+
+    #tooltip {
+      position: absolute;
+      background: #fffbe6;
+      border: 1px solid #ccc;
+      padding: 10px;
+      max-width: 240px;
+      font-size: 14px;
+      z-index: 10;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Anne Frank Diary Calendar</h1>
+  <div id="calendar"></div>
+  <div id="tooltip" class="hidden"></div>
+
+  <script>
+    async function loadData() {
+      const diaryData = {
+        "1942-06-12": {
+          "entry": "I hope I will be able to confide everything to you...",
+          "keywords": ["birthday", "diary", "Kitty"]
+        },
+        "1942-06-15": {
+          "entry": "This is the day I’m going to start my diary.",
+          "keywords": ["school", "Margot"]
+        }
+      };
+
+      const calendar = document.getElementById('calendar');
+      const tooltip = document.getElementById('tooltip');
+
+      const startDate = new Date("1942-06-12");
+      const endDate = new Date("1944-08-01");
+      let currentDate = new Date(startDate);
+
+      while (currentDate <= endDate) {
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'day';
+
+        if (diaryData[dateStr]) {
+          dayDiv.classList.add('has-entry');
+          dayDiv.dataset.tooltip = diaryData[dateStr].entry;
+        }
+
+        dayDiv.addEventListener('mouseover', function (e) {
+          if (this.dataset.tooltip) {
+            tooltip.innerText = this.dataset.tooltip;
+            tooltip.style.left = e.pageX + 10 + 'px';
+            tooltip.style.top = e.pageY + 10 + 'px';
+            tooltip.classList.remove('hidden');
+          }
+        });
+
+        dayDiv.addEventListener('mouseout', function () {
+          tooltip.classList.add('hidden');
+        });
+
+        calendar.appendChild(dayDiv);
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
